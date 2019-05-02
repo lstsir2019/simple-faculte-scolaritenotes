@@ -5,11 +5,12 @@
  */
 package com.efaculte.efaculteapinotes.service.impl;
 
-import com.efaculte.efaculteapinotes.bean.ExcelFile;
 import com.efaculte.efaculteapinotes.bean.NoteEtudiantModule;
 import com.efaculte.efaculteapinotes.common.util.Jexcel;
 import static com.efaculte.efaculteapinotes.common.util.Jexcel.startXl;
 import com.efaculte.efaculteapinotes.dao.NoteEtudiantModuleDao;
+import com.efaculte.efaculteapinotes.rest.proxy.EtudiantProxy;
+import com.efaculte.efaculteapinotes.rest.vo.exchange.EtudiantVo;
 import com.efaculte.efaculteapinotes.service.NoteEtudiantModuleService;
 import java.io.File;
 import java.io.IOException;
@@ -31,6 +32,8 @@ public class NoteEtudiantModuleServiceImpl implements NoteEtudiantModuleService 
 
     @Autowired
     private NoteEtudiantModuleDao noteEtudiantModuleDao;
+    @Autowired
+    private EtudiantProxy etudiantProxy;
 
     public NoteEtudiantModuleDao getNoteEtudiantModuleDao() {
         return noteEtudiantModuleDao;
@@ -38,6 +41,14 @@ public class NoteEtudiantModuleServiceImpl implements NoteEtudiantModuleService 
 
     public void setNoteEtudiantModuleDao(NoteEtudiantModuleDao noteEtudiantModuleDao) {
         this.noteEtudiantModuleDao = noteEtudiantModuleDao;
+    }
+
+    public EtudiantProxy getEtudiantProxy() {
+        return etudiantProxy;
+    }
+
+    public void setEtudiantProxy(EtudiantProxy etudiantProxy) {
+        this.etudiantProxy = etudiantProxy;
     }
 
 //    @Override
@@ -97,18 +108,16 @@ public class NoteEtudiantModuleServiceImpl implements NoteEtudiantModuleService 
         if (notes.isEmpty()) {
             return null;
         } else {
-            List<NoteEtudiantModule> existed = new ArrayList<>();
+            List<NoteEtudiantModule> existing = new ArrayList<>();
             for (NoteEtudiantModule note : notes) {
                 NoteEtudiantModule test = noteEtudiantModuleDao.findByRefEtudiant(note.getRefEtudiant());
-                if (test != null) {
-                    existed.add(note);
+                if (test != null || note.getRefEtudiant() == "" || "".equals(note.getFinale())) {
+                    existing.add(note);
+                } else {
+//                    noteEtudiantModuleDao.save(note);
                 }
             }
-//             notes.removeAll(existed);
-//             for (NoteEtudiantModule note : notes) {
-//             noteEtudiantModuleDao.save(note);
-//            }
-            return existed;
+            return existing;
         }
     }
 }
