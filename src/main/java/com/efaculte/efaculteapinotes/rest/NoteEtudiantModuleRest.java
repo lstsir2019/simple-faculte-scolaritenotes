@@ -6,7 +6,8 @@
 package com.efaculte.efaculteapinotes.rest;
 
 import com.efaculte.efaculteapinotes.bean.NoteEtudiantModule;
-import com.efaculte.efaculteapinotes.bean.NotesCreate;
+import com.efaculte.efaculteapinotes.rest.converter.NoteEtudiantModuleConverter;
+import com.efaculte.efaculteapinotes.rest.vo.NoteEtudiantModuleVo;
 import com.efaculte.efaculteapinotes.service.NoteEtudiantModuleService;
 import java.io.IOException;
 import java.util.List;
@@ -48,14 +49,16 @@ public class NoteEtudiantModuleRest {
 //        return noteEtudiantModuleService.findByrefSemestre(refSemestre);
 //    }
     @GetMapping("/xlpath/{xlpath}/module/{module}/semestre/{semestre}/firstline/{j}")
-    public List<NoteEtudiantModule> create(@PathVariable String xlpath, @PathVariable String module, @PathVariable String semestre, @PathVariable int j) throws IOException, BiffException {
+    public List<NoteEtudiantModuleVo> create(@PathVariable String xlpath, @PathVariable String module, @PathVariable String semestre, @PathVariable int j) throws IOException, BiffException {
 //        xlfile = "C:\\Users\\HP\\Desktop\\rsultatssgbd.xls";
         String link1 = "C:\\Users\\HP\\Desktop\\" + xlpath + ".xls";
         return noteEtudiantModuleService.create(link1, module, semestre, j);
     }
 
     @PostMapping("/")
-    public List<NoteEtudiantModule> saveNotes(@RequestBody List<NoteEtudiantModule> notes) {
+    public List<NoteEtudiantModule> saveNotes(@RequestBody List<NoteEtudiantModuleVo> notesVo) {
+        NoteEtudiantModuleConverter noteEtudiantModuleConverter = new NoteEtudiantModuleConverter();
+        List<NoteEtudiantModule> notes = noteEtudiantModuleConverter.toItem(notesVo);
         return noteEtudiantModuleService.saveNotes(notes);
     }
 

@@ -5,10 +5,9 @@
  */
 package com.efaculte.efaculteapinotes.service;
 
-import com.efaculte.efaculteapinotes.bean.ExcelFile;
 import com.efaculte.efaculteapinotes.bean.NoteEtudiantModule;
+import com.efaculte.efaculteapinotes.rest.vo.NoteEtudiantModuleVo;
 import java.util.List;
-import org.springframework.web.bind.annotation.RequestBody;
 
 /**
  *
@@ -17,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 public interface NoteEtudiantModuleService {
 
 //    public List<NoteEtudiantModule> findByrefSemestre(String refSemestre);
-    public List<NoteEtudiantModule> create(String xlfile, String Module, String Semestre, int j);
+    public List<NoteEtudiantModuleVo> create(String xlfile, String Module, String Semestre, int j);
 
     public NoteEtudiantModule findByRefEtudiant(String refEtudiant);
 

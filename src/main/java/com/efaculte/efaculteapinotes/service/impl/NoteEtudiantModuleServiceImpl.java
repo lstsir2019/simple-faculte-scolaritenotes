@@ -9,8 +9,9 @@ import com.efaculte.efaculteapinotes.bean.NoteEtudiantModule;
 import com.efaculte.efaculteapinotes.common.util.Jexcel;
 import static com.efaculte.efaculteapinotes.common.util.Jexcel.startXl;
 import com.efaculte.efaculteapinotes.dao.NoteEtudiantModuleDao;
+import com.efaculte.efaculteapinotes.rest.converter.NoteEtudiantModuleConverter;
 import com.efaculte.efaculteapinotes.rest.proxy.EtudiantProxy;
-import com.efaculte.efaculteapinotes.rest.vo.exchange.EtudiantVo;
+import com.efaculte.efaculteapinotes.rest.vo.NoteEtudiantModuleVo;
 import com.efaculte.efaculteapinotes.service.NoteEtudiantModuleService;
 import java.io.File;
 import java.io.IOException;
@@ -60,37 +61,45 @@ public class NoteEtudiantModuleServiceImpl implements NoteEtudiantModuleService 
 //        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 //    }
     @Override
-    public List<NoteEtudiantModule> create(String xlfile, String module, String semestre, int j) {
-        List<NoteEtudiantModule> notes = new ArrayList<>();
+    public List<NoteEtudiantModuleVo> create(String xlfile, String module, String semestre, int j) {
+        List<NoteEtudiantModuleVo> notesVo = new ArrayList<>();
         Jexcel jexcel = new Jexcel();
         File file = new File(xlfile);
 
         try {
             Sheet s = startXl(file);
             int r = s.getRows();
-            for (int i = j; i < r; i++) {
-                NoteEtudiantModule note = jexcel.createNote(file, i);
+            for (int i = j; i < r-1; i++) {
+                NoteEtudiantModuleVo note = jexcel.createNote(file, i);
                 note.setRefModule(module);
                 note.setRefSemestre(semestre);
-                if (note.getRefEtudiant() != "") {
-                    notes.add(note);
+                NoteEtudiantModule test = noteEtudiantModuleDao.findByRefEtudiant(note.getRefEtudiant());
+                if (test != null) {
+                    note.setEtat("Existant");
+                } else if (note.getRefEtudiant() == "") {
+                    note.setEtat("Pas de CNE");
+                } else if (note.getFinale() == "") {
+                    note.setEtat("Pas de note finale");
+                } else {
+                    note.setEtat("Good");
                 }
+                notesVo.add(note);
             }
         } catch (IOException ex) {
             Logger.getLogger(NoteEtudiantModuleServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
         } catch (BiffException ex) {
             Logger.getLogger(NoteEtudiantModuleServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
-//        for (NoteEtudiantModule note : notes) {
-//            NoteEtudiantModule test = noteEtudiantModuleDao.findByRefEtudiant(note.getRefEtudiant());
-//            if (test != null) {
-//                test.setFinale(note.getFinale());
-//                noteEtudiantModuleDao.save(test);
-//            } else {
-//                noteEtudiantModuleDao.save(note);
-//            }
-//        }
-        return notes;
+        //        for (NoteEtudiantModule note : notesVo) {
+        //            NoteEtudiantModule test = noteEtudiantModuleDao.findByRefEtudiant(note.getRefEtudiant());
+        //            if (test != null) {
+        //                test.setFinale(note.getFinale());
+        //                noteEtudiantModuleDao.save(test);
+        //            } else {
+        //                noteEtudiantModuleDao.save(note);
+        //            }
+        //        }
+        return notesVo;
     }
 
     @Override

@@ -6,6 +6,7 @@
 package com.efaculte.efaculteapinotes.common.util;
 
 import com.efaculte.efaculteapinotes.bean.NoteEtudiantModule;
+import com.efaculte.efaculteapinotes.rest.vo.NoteEtudiantModuleVo;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -78,21 +79,21 @@ public class Jexcel {
         return eList;
     }
 
-    public NoteEtudiantModule createNote(File file, int line) throws IOException, BiffException {
+    public NoteEtudiantModuleVo createNote(File file, int line) throws IOException, BiffException {
         List elist = new ArrayList();
         Sheet s = startXl(file);
-        NoteEtudiantModule noteEtudiantModule = new NoteEtudiantModule();
+        NoteEtudiantModuleVo noteEtudiantModuleVo = new NoteEtudiantModuleVo();
         int cols = s.getColumns();
         for (int i = 0; i < cols; i++) {
             jxl.Cell c = s.getCell(i, line);
             elist.add(c.getContents());
         }
-        noteEtudiantModule.setRefEtudiant((String) elist.get(0));
-        noteEtudiantModule.setNoteAavantRatt((String) elist.get(3));
-        noteEtudiantModule.setNoteapresRatt((String) elist.get(4));
-        noteEtudiantModule.setFinale((String) elist.get(5));
-        noteEtudiantModule.setStatutFinal((String) elist.get(7));
-        return noteEtudiantModule;
+        noteEtudiantModuleVo.setRefEtudiant((String) elist.get(0));
+        noteEtudiantModuleVo.setNoteAavantRatt((String) elist.get(3));
+        noteEtudiantModuleVo.setNoteapresRatt((String) elist.get(4));
+        noteEtudiantModuleVo.setFinale((String) elist.get(5));
+        noteEtudiantModuleVo.setStatutFinal((String) elist.get(7));
+        return noteEtudiantModuleVo;
     }
 
 }
